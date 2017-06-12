@@ -1,11 +1,11 @@
 import pygame
-import scales
+from scales import Snake, Scale
 import random
 import math
 
 pygame.init()
-screen_width = 600
-screen_height = 400
+screen_width = 200
+screen_height = 200
 screen = pygame.display.set_mode((screen_width, screen_height))  
 clock = pygame.time.Clock()
 
@@ -16,11 +16,10 @@ def create_food():
     x_random -= (x_random % 10)
     y_random -= (y_random % 10)
 
-    food = scales.Scale(x_random, y_random)
+    food = Scale(x_random, y_random)
     return food
 
-#Every snake starts off with a head and then grows a tail
-snake = scales.Snake()
+snake = Snake()
 
 #Game Loop
 done = False
@@ -37,17 +36,21 @@ while not done:
 
     #Change Snake Direction
     if pygame.key.get_pressed()[pygame.K_UP]:
-        snake.x_direction = 0
-        snake.y_direction = -1
+        if(snake.x_direction != 0 and snake.y_direction != 1):
+            snake.x_direction = 0
+            snake.y_direction = -1
     if pygame.key.get_pressed()[pygame.K_DOWN]:
-        snake.x_direction = 0
-        snake.y_direction = 1        
+        if(snake.x_direction != 0 and snake.y_direction != -1):
+            snake.x_direction = 0
+            snake.y_direction = 1        
     if pygame.key.get_pressed()[pygame.K_LEFT]:
-        snake.x_direction = -1
-        snake.y_direction = 0        
+        if(snake.x_direction != 1 and snake.y_direction != 0):
+            snake.x_direction = -1
+            snake.y_direction = 0        
     if pygame.key.get_pressed()[pygame.K_RIGHT]: 
-        snake.x_direction = 1
-        snake.y_direction = 0       
+        if(snake.x_direction != -1 and snake.y_direction != 0):
+            snake.x_direction = 1
+            snake.y_direction = 0       
 
     #Create New Food if the old one has not been eaten
     if food_is_eaten:
@@ -57,10 +60,24 @@ while not done:
     #Move the Snake
     if count % 5 == 0: snake.move()
     
+    #Check for collision with self
+    for index, scale in reversed(list(enumerate(snake.scales))):
+        if index >= 1:
+            if snake.scales[0].x_position == snake.scales[index].x_position and snake.scales[0].y_position == snake.scales[index].y_position :
+                done = True
+
+    #Check for collision with walls
+    if snake.scales[0].x_position < 0 or \
+       snake.scales[0].x_position > screen_width - snake.scales[0].size or \
+       snake.scales[0].y_position < 0 or \
+       snake.scales[0].y_position > screen_height - snake.scales[0].size:
+        done = True
+
+    
     if snake.can_eat(food): #check for collision
-        snake.eat_and_grow(food)
+        snake.eat(food)
         food_is_eaten = True
-        print (len(snake.scales))
+        #print (len(snake.scales))
     
     #Clear the previous screen
     screen.fill((0, 0, 0)) 

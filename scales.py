@@ -25,21 +25,15 @@ class Snake(object):
         self.scales[0].x_position += self.speed * self.x_direction
         self.scales[0].y_position += self.speed * self.y_direction
 
-
-        #(3)(2)(1)
-        #(-)(-)(0)
-
-   
-        #(-)(-)(-)(-)(-)
-        #   (-)(-)(-)(-)(-)
-        #(-)(-)(-)(-)(-)(-)   
+    
+          
     def can_eat(self, food): # i.e. collision
         if self.scales[0].x_position == food.x_position and self.scales[0].y_position == food.y_position:
         	return True
         else:
         	return False
 
-    def eat_and_grow(self,food): # add a scale
+    def eat(self,food): # add a scale
     
         #save tail end scale in temp var
         temp_scale_x = self.scales[len(self.scales)-1].x_position
@@ -53,9 +47,9 @@ class Snake(object):
         self.scales.append(Scale(temp_scale_x, temp_scale_y, temp_scale_size))
         #self.scales.append(temp_scale)
 
-        for scale in self.scales:
+        '''for scale in self.scales:
             print (str(scale.x_position) + ", " + str(scale.y_position))
-
+        '''
 
 
 
